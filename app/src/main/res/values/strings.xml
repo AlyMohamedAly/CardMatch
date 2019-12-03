@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CardMatch</string>
+    <string name="Img_Description">Match Me!</string>
 </resources>
