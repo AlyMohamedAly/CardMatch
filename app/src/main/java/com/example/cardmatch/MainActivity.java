@@ -12,9 +12,12 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
 
     ImageButton Cards[] = new ImageButton[8];
+    final int BlurMe = Color.argb(255,50, 141, 168);
+    int[] Locations = {0,0,0,0,0,0,0,0};
+    boolean Pressed = false;
 
+    public void PressMe(){ Pressed = (Pressed ? false : true); }
 
-    // Implementing Fisher–Yates shuffle
     public static int[] getRandomNumbers(){
         Random rand = new Random();
         int[] ar = {0,1,2,3,4,5,6,7};
@@ -48,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
         int[] ImageIds = {R.drawable.apple, R.drawable.coconut, R.drawable.orange, R.drawable.milk};
         for (int i = 0; i < 8; i++){
             Cards[RandomArray[i]].setImageResource(ImageIds[i/2]);
-            Cards[RandomArray[i]].setColorFilter(Color.argb(255,50, 141, 168));
+            Locations[RandomArray[i]] = i/2;
+            Cards[RandomArray[i]].setColorFilter(BlurMe);
             Cards[RandomArray[i]].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
