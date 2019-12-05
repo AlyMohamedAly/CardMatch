@@ -16,6 +16,9 @@ public class MainActivity extends AppCompatActivity {
 
     TextView timerTextView;
     long startTime = 0;
+    long startTime2 = 0;
+    int TimeTaken = 0;
+    boolean TimerSleeping= true;
 
     //runs without a timer by reposting this handler at the end of the runnable
     Handler timerHandler = new Handler();
@@ -23,12 +26,30 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void run() {
+            Log.d("msg", "run1111: Hereeeeeee");
+            Log.d("msg", "run222: " + startTime);
             long millis = System.currentTimeMillis() - startTime;
             int seconds = (int) (millis / 1000);
             int minutes = seconds / 60;
             seconds = seconds % 60;
-            timerTextView.setText(String.format("%d:%02d", minutes, seconds));
 
+            timerTextView.setText(String.format("%d:%02d", minutes, seconds));
+            
+            if (!TimerSleeping) {
+                long millis2 = System.currentTimeMillis() - startTime2;
+                int seconds2 = (int) (millis2 / 1000);
+                seconds2 = seconds2 % 60;
+                TimeTaken = seconds2;
+
+                if (TimeTaken >= 1) {
+                    TimerSleeping = true;
+                    TimeTaken = 0;
+
+                    for (ImageButton MyCards: Cards) { MyCards.setClickable(true); }
+                    PressedCard.setColorFilter(BlurMe);
+                    TempPhoto.setColorFilter(BlurMe);
+                }
+            }
             timerHandler.postDelayed(this, 500);
         }
     };
@@ -37,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     final int BlurMe = Color.argb(255,50, 141, 168);
     HashMap<Integer,Integer> Location = new HashMap<Integer, Integer>();
     ImageButton PressedCard = null;
+    ImageButton TempPhoto = null;
     boolean Pressed = false;
 
     public static int[] getRandomNumbers(){
@@ -83,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
                     for (ImageButton MyCards: Cards) { MyCards.setClickable(false); }
 
-                    ImageButton TempPhoto = (ImageButton) v;
+                    TempPhoto = (ImageButton) v;
 
                     if (TempPhoto.getColorFilter() != null){
                         if (Pressed){
@@ -91,20 +113,21 @@ public class MainActivity extends AppCompatActivity {
                             if (Location.get(TempPhoto.getId()) == Location.get(PressedCard.getId())){
                                 Log.d("msg", "onClick: Here");
                             }else{
-                                startTime = System.currentTimeMillis();
                                 TempPhoto.clearColorFilter();
-                                TempPhoto.setColorFilter(BlurMe);
-                                PressedCard.setColorFilter(BlurMe);
+                                startTime2 = System.currentTimeMillis();
+                                TimerSleeping = false;
                             }
                             Pressed = false;
-                            PressedCard = null;
+                            if(TimerSleeping)
+                                PressedCard = null;
                         }else{
                             TempPhoto.clearColorFilter();
                             PressedCard = TempPhoto;
                             Pressed = true;
                         }
                     }
-                    for (ImageButton MyCards: Cards) { MyCards.setClickable(true); }
+                    if (TimerSleeping)
+                        for (ImageButton MyCards: Cards) { MyCards.setClickable(true); }
                 }
             });
             startTime = System.currentTimeMillis();
