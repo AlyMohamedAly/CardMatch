@@ -2,6 +2,7 @@ package com.example.cardmatch;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +17,24 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
+    public void OnCreateHelper(){
+        CardsDone = 0;
+        startTime = System.currentTimeMillis();
+        TimerSleeping= true;
+        PressedCard = null;
+        TempPhoto = null;
+        Pressed = false;
+        TimeTaken = 0;
+        RandomArray = getRandomNumbers();
+
+        for (int i = 0; i < 8; i++){
+            Cards[RandomArray[i]].setImageResource(ImageIds[i/2]);
+            Location.put(Cards[RandomArray[i]].getId(), i/2);
+            Cards[RandomArray[i]].setColorFilter(BlurMe);
+            Cards[RandomArray[i]].setClickable(true);
+        }
+    }
+
     public void openDialog() {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
         builder1.setMessage(getText(R.string.congratulations));
@@ -25,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
                 getText(R.string.again),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
+                        OnCreateHelper();
                     }
                 });
 
@@ -33,7 +52,10 @@ public class MainActivity extends AppCompatActivity {
                 getText(R.string.Exit),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
+                        Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+                        homeIntent.addCategory(Intent.CATEGORY_HOME );
+                        homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(homeIntent);
                     }
                 });
 
@@ -43,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     TextView timerTextView;
+    int[] RandomArray;
     long startTime = 0;
     long startTime2 = 0;
     int TimeTaken = 0;
@@ -86,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
     final int BlurMe = Color.argb(255,50, 141, 168);
     HashMap<Integer,Integer> Location = new HashMap<Integer, Integer>();
     ImageButton PressedCard = null;
+    int[] ImageIds = {R.drawable.apple, R.drawable.coconut, R.drawable.orange, R.drawable.milk};
     ImageButton TempPhoto = null;
     boolean Pressed = false;
 
@@ -119,12 +143,9 @@ public class MainActivity extends AppCompatActivity {
         Cards[6] = findViewById(R.id.imageButton7);
         Cards[7] = findViewById(R.id.imageButton8);
 
-        int[] RandomArray = getRandomNumbers();
-        int[] ImageIds = {R.drawable.apple, R.drawable.coconut, R.drawable.orange, R.drawable.milk};
+        OnCreateHelper();
+
         for (int i = 0; i < 8; i++){
-            Cards[RandomArray[i]].setImageResource(ImageIds[i/2]);
-            Location.put(Cards[RandomArray[i]].getId(), i/2);
-            Cards[RandomArray[i]].setColorFilter(BlurMe);
             Cards[RandomArray[i]].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -139,7 +160,6 @@ public class MainActivity extends AppCompatActivity {
                             if (Location.get(TempPhoto.getId()) == Location.get(PressedCard.getId())){
                                 CardsDone++;
                                 if (CardsDone == 4){
-                                    timerHandler.removeCallbacks(timerRunnable);
                                     openDialog();
                                 }
                             }else{
