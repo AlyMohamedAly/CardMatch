@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -16,6 +15,58 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
+
+    final int BlurMe = Color.argb(255,50, 141, 168);
+    final int[] ImageIds = {R.drawable.apple, R.drawable.coconut, R.drawable.orange, R.drawable.milk};
+
+    ImageButton Cards[] = new ImageButton[8];
+    ImageButton PressedCard;
+    ImageButton TempPhoto;
+
+    TextView timerTextView;
+
+    HashMap<Integer,Integer> Location = new HashMap<Integer, Integer>();
+
+    int[] RandomArray;
+
+    boolean Pressed;
+    boolean TimerSleeping;
+
+    long startTime;
+    long startTime2;
+    int TimeTaken;
+    int CardsDone;
+
+    //runs without a timer by reposting this handler at the end of the runnable
+    Handler timerHandler = new Handler();
+    Runnable timerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            long millis = System.currentTimeMillis() - startTime;
+            int seconds = (int) (millis / 1000);
+            int minutes = seconds / 60;
+            seconds = seconds % 60;
+
+            timerTextView.setText(String.format("%d:%02d", minutes, seconds));
+
+            if (!TimerSleeping) {
+                long millis2 = System.currentTimeMillis() - startTime2;
+                int seconds2 = (int) (millis2 / 1000);
+                seconds2 = seconds2 % 60;
+                TimeTaken = seconds2;
+
+                if (TimeTaken >= 1) {
+                    TimerSleeping = true;
+                    TimeTaken = 0;
+
+                    for (ImageButton MyCards: Cards) { MyCards.setClickable(true); }
+                    PressedCard.setColorFilter(BlurMe);
+                    TempPhoto.setColorFilter(BlurMe);
+                }
+            }
+            timerHandler.postDelayed(this, 500);
+        }
+    };
 
     public void OnCreateHelper(){
         CardsDone = 0;
@@ -60,58 +111,8 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         AlertDialog alert11 = builder1.create();
-        alert11.setContentView(R.layout.dialog);
         alert11.show();
     }
-
-    TextView timerTextView;
-    int[] RandomArray;
-    long startTime = 0;
-    long startTime2 = 0;
-    int TimeTaken = 0;
-    boolean TimerSleeping= true;
-    int CardsDone = 0;
-    //runs without a timer by reposting this handler at the end of the runnable
-    Handler timerHandler = new Handler();
-    Runnable timerRunnable = new Runnable() {
-
-        @Override
-        public void run() {
-            Log.d("msg", "run1111: Hereeeeeee");
-            Log.d("msg", "run222: " + startTime);
-            long millis = System.currentTimeMillis() - startTime;
-            int seconds = (int) (millis / 1000);
-            int minutes = seconds / 60;
-            seconds = seconds % 60;
-
-            timerTextView.setText(String.format("%d:%02d", minutes, seconds));
-
-            if (!TimerSleeping) {
-                long millis2 = System.currentTimeMillis() - startTime2;
-                int seconds2 = (int) (millis2 / 1000);
-                seconds2 = seconds2 % 60;
-                TimeTaken = seconds2;
-
-                if (TimeTaken >= 1) {
-                    TimerSleeping = true;
-                    TimeTaken = 0;
-
-                    for (ImageButton MyCards: Cards) { MyCards.setClickable(true); }
-                    PressedCard.setColorFilter(BlurMe);
-                    TempPhoto.setColorFilter(BlurMe);
-                }
-            }
-            timerHandler.postDelayed(this, 500);
-        }
-    };
-
-    ImageButton Cards[] = new ImageButton[8];
-    final int BlurMe = Color.argb(255,50, 141, 168);
-    HashMap<Integer,Integer> Location = new HashMap<Integer, Integer>();
-    ImageButton PressedCard = null;
-    int[] ImageIds = {R.drawable.apple, R.drawable.coconut, R.drawable.orange, R.drawable.milk};
-    ImageButton TempPhoto = null;
-    boolean Pressed = false;
 
     public static int[] getRandomNumbers(){
         Random rand = new Random();
@@ -124,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
             ar[index] = ar[i];
             ar[i] = a;
         }
-        Log.d("msg", "getRandomNumbers: Done");
         return ar;
     }
 
