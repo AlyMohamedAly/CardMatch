@@ -1,6 +1,7 @@
 package com.example.cardmatch;
 
-import android.app.Dialog;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,10 +17,29 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
 
     public void openDialog() {
-        final Dialog dialog = new Dialog(this); // Context, this, etc.
-        dialog.setContentView(R.layout.dialog);
-        //dialog.setTitle("testt");
-        dialog.show();
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+        builder1.setMessage(getText(R.string.congratulations));
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton(
+                getText(R.string.again),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        builder1.setNegativeButton(
+                getText(R.string.Exit),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.setContentView(R.layout.dialog);
+        alert11.show();
     }
 
     TextView timerTextView;
