@@ -1,5 +1,6 @@
 package com.example.cardmatch;
 
+import android.app.Dialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,12 +15,19 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
+    public void openDialog() {
+        final Dialog dialog = new Dialog(this); // Context, this, etc.
+        dialog.setContentView(R.layout.dialog);
+        //dialog.setTitle("testt");
+        dialog.show();
+    }
+
     TextView timerTextView;
     long startTime = 0;
     long startTime2 = 0;
     int TimeTaken = 0;
     boolean TimerSleeping= true;
-
+    int CardsDone = 0;
     //runs without a timer by reposting this handler at the end of the runnable
     Handler timerHandler = new Handler();
     Runnable timerRunnable = new Runnable() {
@@ -34,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
             seconds = seconds % 60;
 
             timerTextView.setText(String.format("%d:%02d", minutes, seconds));
-            
+
             if (!TimerSleeping) {
                 long millis2 = System.currentTimeMillis() - startTime2;
                 int seconds2 = (int) (millis2 / 1000);
@@ -82,8 +90,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         timerTextView = findViewById(R.id.timerTextView);
-
-
         Cards[0] = findViewById(R.id.imageButton1);
         Cards[1] = findViewById(R.id.imageButton2);
         Cards[2] = findViewById(R.id.imageButton3);
@@ -111,7 +117,11 @@ public class MainActivity extends AppCompatActivity {
                         if (Pressed){
                             TempPhoto.clearColorFilter();
                             if (Location.get(TempPhoto.getId()) == Location.get(PressedCard.getId())){
-                                Log.d("msg", "onClick: Here");
+                                CardsDone++;
+                                if (CardsDone == 4){
+                                    timerHandler.removeCallbacks(timerRunnable);
+                                    openDialog();
+                                }
                             }else{
                                 TempPhoto.clearColorFilter();
                                 startTime2 = System.currentTimeMillis();

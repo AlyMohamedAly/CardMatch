@@ -2,4 +2,7 @@
     <string name="app_name">CardMatch</string>
     <string name="Img_Description">Match Me!</string>
     <string name="PlaceHolder">PlaceHolder</string>
+    <string name="congratulations">Congratulations!</string>
+    <string name="again">Play Again</string>
+    <string name="Exit">Exit</string>
 </resources>
