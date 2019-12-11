@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
 
     boolean Pressed;
     boolean TimerSleeping;
+    MediaPlayer mp;
+
 
     long startTime;
     long startTime2;
@@ -115,6 +118,13 @@ public class MainActivity extends AppCompatActivity {
         alert11.show();
     }
 
+    public void MediaHandler(boolean Correct){
+        if (Correct)
+            mp = MediaPlayer.create(this, R.raw.punch);
+        else
+            mp = MediaPlayer.create(this, R.raw.splat);
+    }
+
     public static int[] getRandomNumbers(){
         Random rand = new Random();
         int[] ar = {0,1,2,3,4,5,6,7};
@@ -145,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
         Cards[6] = findViewById(R.id.imageButton7);
         Cards[7] = findViewById(R.id.imageButton8);
 
+
         OnCreateHelper();
 
         for (int i = 0; i < 8; i++){
@@ -160,11 +171,15 @@ public class MainActivity extends AppCompatActivity {
                         if (Pressed){
                             TempPhoto.clearColorFilter();
                             if (Location.get(TempPhoto.getId()) == Location.get(PressedCard.getId())){
+                                MediaHandler(true);
+                                mp.start();
                                 CardsDone++;
                                 if (CardsDone == 4){
                                     openDialog();
                                 }
                             }else{
+                                MediaHandler(false);
+                                mp.start();
                                 TempPhoto.clearColorFilter();
                                 startTime2 = System.currentTimeMillis();
                                 TimerSleeping = false;
