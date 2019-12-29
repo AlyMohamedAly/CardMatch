@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     boolean Pressed;
     boolean TimerSleeping;
-    MediaPlayer mp;
+    MediaPlayer mp = null;
 
 
     long startTime;
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
     public void openDialog() {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
         builder1.setMessage(getText(R.string.congratulations));
-        builder1.setCancelable(true);
+        builder1.setCancelable(false);
 
         builder1.setPositiveButton(
                 getText(R.string.again),
@@ -178,6 +178,8 @@ public class MainActivity extends AppCompatActivity {
                                     openDialog();
                                 }
                             }else{
+                                if (mp != null)
+                                    mp.release();
                                 MediaHandler(false);
                                 mp.start();
                                 TempPhoto.clearColorFilter();
